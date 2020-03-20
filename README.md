@@ -6,4 +6,4 @@ See [digits.py](./digits.py) for the definition of the TensorFlow neural network
 
 Up live to view and play with at [DigitsJS on Heroku](https://digitsjs.herokuapp.com/)
 
-[![DigitsJS Preview](./digitsjs.gif)]
+![DigitsJS Preview](./digitsjs.gif)
