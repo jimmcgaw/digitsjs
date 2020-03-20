@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST Digits JavaScript Guesser</title>
+    <style>
+        canvas {
+            border: solid 1px gray;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>MNIST Digits Classifier in JS</h1>
+        <div>
+            <h2>Sketch a number from 0 - 9</h2>
+            <canvas id="sketchpad"></canvas>
+            <!-- <canvas id="copypad" height="28" width="28"></canvas> -->
+            <div>
+                <button id="submit">Guess</button>
+                <button id="clear">Clear</button>
+            </div>
+        </div>
+        <div>
+            <h2>Our Guess:</h2>
+            <div id="guess" style="font-size: 48px;"></div>
+        </div>
+    </div>
+    <script src="/static/@tensorflow/tfjs/dist/tf.min.js"></script>
+    <script src="/static/jquery/dist/jquery.min.js"></script>
+    <script src="/static/sketchpad/scripts/sketchpad.js"></script>
+    <script>
+        var strokeWidth = 1;
+        var model;
+        async function loadModel() {
+            return tf.loadLayersModel('/static/model/model.json');
+        }
+
+        loadModel().then(response => {
+            model = response;
+        })
+
+        var sketchpad = new Sketchpad({
+            element: '#sketchpad',
+            width: 28*strokeWidth,
+            height: 28*strokeWidth,
+        });
+        // Change color
+        sketchpad.color = '#000000';
+
+        // Change stroke size
+        sketchpad.penSize = strokeWidth;
+
+        var canvas = document.getElementById('sketchpad');
+        var context = canvas.getContext('2d');
+        // var copyCanvas = document.getElementById('copypad');
+        // var copyContext = copyCanvas.getContext('2d');
+
+        $('#clear').click(function(){
+            sketchpad.clear();
+        });
+
+        $('#submit').click(function(){
+            var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            // copyContext.putImageData(imageData, 0, 0);
+
+            var binarize = function(num) {
+                if (num > 0) {
+                    return 1;
+                }
+                return 0;
+            }
+            var typedBinArray = imageData.data.filter((e, i) => i % 4 === 3).map(binarize);
+            var binArray = Array.prototype.slice.call(typedBinArray);
+            var modelInput = tf.tensor([binArray], [1, 28, 28]);
+            var guessTensor = model.predict(modelInput);
+            var guessArray = guessTensor.dataSync();
+            var maxProbability = Math.max(...guessArray);
+            var guess = guessArray.indexOf(maxProbability);
+            $('#guess').text(guess);
+        });
+    </script>
+</body>
+</html>
