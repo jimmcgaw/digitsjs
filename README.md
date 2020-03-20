@@ -5,3 +5,5 @@ Code to train a TensorFlow model on the MNIST digits dataset, export it to tenso
 See [digits.py](./digits.py) for the definition of the TensorFlow neural network that's doing the classification of the digit data.
 
 Up live to view and play with at [DigitsJS on Heroku](https://digitsjs.herokuapp.com/)
+
+[DigitsJS GIF Preview](./digitsjs.gif)
