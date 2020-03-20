@@ -11,4 +11,4 @@ app.get('/', (req, res) => {
     res.sendFile('index.html');
 });
 
-app.listen(port)
+app.listen(port, () => console.log(`Now running at http://localhost:${port}/`));
